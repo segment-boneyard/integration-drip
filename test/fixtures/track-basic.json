@@ -1,0 +1,17 @@
+{
+  "input": {
+    "type": "track",
+    "userId": "user-id",
+    "event": "my-event",
+    "properties": {
+      "prop": true,
+      "revenue": 19.99,
+      "email": "jd@example.com"
+    }
+  },
+  "output": {
+    "value": 19.99,
+    "email": "jd@example.com",
+    "action": "my-event"
+  }
+}
