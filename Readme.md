@@ -1,8 +1,8 @@
-[![Build Status](https://circleci.com/gh/segmentio/integration-drip.png)](https://circleci.com/gh/segmentio/integration-drip)
+[![Build Status](https://circleci.com/gh/segmentio/integration-drip/tree/master.png?style=badge)](https://circleci.com/gh/segmentio/integration-drip/tree/master)
 
-# Drip server-side integration.
+# integration-drip
 
-Write me...
+Drip server-side integration for Segment.
 
 
 ## License
