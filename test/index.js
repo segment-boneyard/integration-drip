@@ -34,8 +34,7 @@ describe('Drip', function(){
       .ensure('settings.account')
       .ensure('settings.token')
       .ensure('message.email')
-      .channels(['server'])
-      .retries(2);
+      .channels(['server']);
   });
 
   describe('.validate()', function(){
