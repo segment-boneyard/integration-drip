@@ -17,7 +17,6 @@ describe('Drip', function(){
   beforeEach(function(){
     settings = {
       account: 8838307,
-      campaignId: 2735752,
       token: 'bmrdc6hczyn8yss8o8ta'
     };
     drip = new Drip(settings);
@@ -29,8 +28,7 @@ describe('Drip', function(){
   it('should have the correct settings', function(){
     test
       .name('Drip')
-      .endpoint('https://api.getdrip.com/v1')
-      .ensure('settings.campaignId', { methods: ['identify'] })
+      .endpoint('https://api.getdrip.com/v2/')
       .ensure('settings.account')
       .ensure('settings.token')
       .ensure('message.email')
@@ -57,17 +55,6 @@ describe('Drip', function(){
       test.invalid(msg, { account: 123 });
       test.invalid(msg, { token: 123 });
     });
-
-    it('should be invalid when the msg is identify and campaignId is missing', function(){
-      delete settings.campaignId;
-      test.invalid(msg, settings);
-    });
-
-    it('should be valid when the msg isnt identify and campaignId is missing', function(){
-      msg.type = 'track';
-      delete settings.campaignId;
-      test.invalid(msg, settings);
-    });
   });
 
   describe('mapper', function(){
@@ -89,11 +76,7 @@ describe('Drip', function(){
       var msg = helpers.identify({ traits: { email: 'amir@segment.io' } });
 
       payload.email = msg.email();
-      payload.utc_offset = 0;
-      payload.double_optin = false;
-      payload.starting_email_index = 0;
       payload.custom_fields = drip.normalize(msg.traits());
-      payload.reactivate_if_unsubscribed = false;
 
       test
         .set(settings)
@@ -111,25 +94,14 @@ describe('Drip', function(){
       test
         .set({ account: 1, token: 'x' })
         .identify(helpers.identify())
-        .error('Drip: bad request status=401 msg=', done);
+        .error('Drip: bad request status=401 msg=Authentication failed, check your credentials', done);
     });
   });
 
-  describe('.campaignId()', function(){
-    it('should return campaignId from the message first', function(){
-      var msg = helpers.track({ options: { Drip: { campaignId: '123' } }});
-      assert('123' == drip.campaignId(msg));
-    });
-
-    it('should return campaignId from settings if not in message', function(){
-      var msg = helpers.track();
-      assert('2735752' == drip.campaignId(msg));
-    });
-  });
 
   describe('.track()', function(){
     it('should track successfully', function(done){
-      var msg = helpers.track({ properties: { email: 'amir@segment.io' }, options: { Drip: { campaignId: '2735752' } }});
+      var msg = helpers.track({ properties: { email: 'amir@segment.io' } });
       drip.track(msg, done);
     });
   });
