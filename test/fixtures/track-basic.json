@@ -10,7 +10,9 @@
     }
   },
   "output": {
-    "value": 19.99,
+    "properties": { 
+      "value" : 1999
+    },
     "email": "jd@example.com",
     "action": "my-event"
   }

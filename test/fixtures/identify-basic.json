@@ -8,12 +8,8 @@
       "some trait": true
     }
   },
-  "output": {
-    "reactivate_if_unsubscribed": false,
-    "email": "jd@example.com",
-    "starting_email_index": 0,
-    "utc_offset": 0,
-    "double_optin": false,
+  "output": {    "email": "jd@example.com",
+    "time_zone": "Etc/UTC",
     "custom_fields": {
       "email": "jd@example.com",
       "some_trait": true,
