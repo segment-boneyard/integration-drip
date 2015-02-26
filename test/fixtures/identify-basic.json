@@ -9,7 +9,6 @@
     }
   },
   "output": {    "email": "jd@example.com",
-    "time_zone": "Etc/UTC",
     "custom_fields": {
       "email": "jd@example.com",
       "some_trait": true,
