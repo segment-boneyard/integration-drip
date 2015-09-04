@@ -13,6 +13,7 @@
       "some_trait": true,
       "id": "user-id",
       "trait": true
-    }
+    },
+    "user_id": "user-id"
   }
 }
