@@ -5,14 +5,17 @@
     "traits": {
       "email": "jd@example.com",
       "trait": true,
-      "some trait": true
+      "some trait": true,
+      "tags": ["Tag0", "Tag1"]
     }
   },
-  "output": {    "email": "jd@example.com",
+  "output": {
+    "email": "jd@example.com",
     "custom_fields": {
       "some_trait": true,
       "id": "user-id",
       "trait": true
-    }
+    },
+    "tags": ["Tag0", "Tag1"]
   }
 }
