@@ -62,6 +62,10 @@ describe('Drip', function(){
       it('should map basic message', function(){
         test.maps('identify-basic');
       });
+
+      it('should map message with tags', function(){
+        test.maps('identify-tags');
+      });
     });
 
     describe('track', function(){
@@ -76,7 +80,9 @@ describe('Drip', function(){
       var msg = helpers.identify({ traits: { email: 'amir@segment.io' } });
 
       payload.email = msg.email();
+      payload.user_id = msg.userId();
       payload.custom_fields = drip.normalize(msg.traits());
+      delete payload.custom_fields["email"];
 
       test
         .set(settings)

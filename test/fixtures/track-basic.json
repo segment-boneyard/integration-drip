@@ -10,7 +10,8 @@
     }
   },
   "output": {
-    "properties": { 
+    "properties": {
+      "prop": true,
       "value" : 1999
     },
     "email": "jd@example.com",

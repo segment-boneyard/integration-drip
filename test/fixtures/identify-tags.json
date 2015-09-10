@@ -1,0 +1,26 @@
+{
+  "input": {
+    "type": "identify",
+    "userId": "user-id",
+    "traits": {
+      "email": "jd@example.com",
+      "trait": true,
+      "some trait": true,
+      "tags": ["Tag0", "Tag1"],
+      "time_zone": "America/LosAngeles",
+      "prospect": true
+    }
+  },
+  "output": {
+    "email": "jd@example.com",
+    "custom_fields": {
+      "some_trait": true,
+      "id": "user-id",
+      "trait": true
+    },
+    "tags": ["Tag0", "Tag1"],
+    "user_id": "user-id",
+    "time_zone": "America/LosAngeles",
+    "prospect": true
+  }
+}
