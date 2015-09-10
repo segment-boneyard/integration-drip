@@ -1,4 +1,11 @@
 
+1.0.8 / 2015-09-10
+==================
+
+  * remove other top level attributes from custom fields
+  * pass event properties in track call
+  * update identify mapping for tags
+
 1.0.7 / 2015-09-03
 ==================
 
