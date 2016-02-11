@@ -1,4 +1,4 @@
-[![Build Status](https://circleci.com/gh/segmentio/integration-drip/tree/master.png?style=badge)](https://circleci.com/gh/segmentio/integration-drip/tree/master)
+[![Build Status](https://circleci.com/gh/segmentio/integration-drip/tree/master.png?style=svg)](https://circleci.com/gh/segmentio/integration-drip/tree/master)
 
 # integration-drip
 
