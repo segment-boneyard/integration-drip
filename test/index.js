@@ -100,7 +100,7 @@ describe('Drip', function(){
       test
         .set({ account: 1, token: 'x' })
         .identify(helpers.identify())
-        .error('Drip: bad request status=401 msg=Authentication failed, check your credentials', done);
+        .error('bad request status=401 msg=Authentication failed, check your credentials', done);
     });
   });
 
