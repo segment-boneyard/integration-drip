@@ -1,20 +1,17 @@
+'use strict';
 
 var Test = require('segmentio-integration-tester');
 var helpers = require('./helpers');
-var facade = require('segmentio-facade');
 var mapper = require('../lib/mapper');
-var assert = require('assert');
-var Identify = facade.Identify;
-var Track = facade.Track;
 var Drip = require('..');
 
-describe('Drip', function(){
+describe('Drip', function() {
   var settings;
   var payload;
   var test;
   var drip;
 
-  beforeEach(function(){
+  beforeEach(function() {
     settings = {
       account: 8838307,
       token: 'bmrdc6hczyn8yss8o8ta'
@@ -25,7 +22,7 @@ describe('Drip', function(){
     payload = {};
   });
 
-  it('should have the correct settings', function(){
+  it('should have the correct settings', function() {
     test
       .name('Drip')
       .endpoint('https://api.getdrip.com/v2/')
@@ -35,10 +32,10 @@ describe('Drip', function(){
       .channels(['server']);
   });
 
-  describe('.validate()', function(){
+  describe('.validate()', function() {
     var msg;
 
-    beforeEach(function(){
+    beforeEach(function() {
       msg = {
         type: 'identify',
         traits: {
@@ -47,42 +44,42 @@ describe('Drip', function(){
       };
     });
 
-    it('should be valid when token + account are given', function(){
+    it('should be valid when token + account are given', function() {
       test.valid(msg, settings);
     });
 
-    it('should be invalid when token / account are missing', function(){
+    it('should be invalid when token / account are missing', function() {
       test.invalid(msg, { account: 123 });
       test.invalid(msg, { token: 123 });
     });
   });
 
-  describe('mapper', function(){
-    describe('identify', function(){
-      it('should map basic message', function(){
+  describe('mapper', function() {
+    describe('identify', function() {
+      it('should map basic message', function() {
         test.maps('identify-basic');
       });
 
-      it('should map message with tags', function(){
+      it('should map message with tags', function() {
         test.maps('identify-tags');
       });
     });
 
-    describe('track', function(){
-      it('should map basic message', function(){
+    describe('track', function() {
+      it('should map basic message', function() {
         test.maps('track-basic');
       });
     });
   });
 
-  describe('.identify()', function(){
-    it('should identify user successfully', function(done){
+  describe('.identify()', function() {
+    it('should identify user successfully', function(done) {
       var msg = helpers.identify({ traits: { email: 'amir@segment.io' } });
 
       payload.email = msg.email();
       payload.user_id = msg.userId();
       payload.custom_fields = drip.normalize(msg.traits());
-      delete payload.custom_fields["email"];
+      delete payload.custom_fields.email;
 
       test
         .set(settings)
@@ -91,12 +88,12 @@ describe('Drip', function(){
         .end(done);
     });
 
-    it('should identify again', function(done){
+    it('should identify again', function(done) {
       var msg = helpers.identify({ traits: { email: 'amir@segment.io' } });
       drip.identify(msg, done);
     });
 
-    it('should error with BadRequest on wrong creds', function(done){
+    it('should error with BadRequest on wrong creds', function(done) {
       test
         .set({ account: 1, token: 'x' })
         .identify(helpers.identify())
@@ -105,8 +102,8 @@ describe('Drip', function(){
   });
 
 
-  describe('.track()', function(){
-    it('should track successfully', function(done){
+  describe('.track()', function() {
+    it('should track successfully', function(done) {
       var msg = helpers.track({ properties: { email: 'amir@segment.io' } });
       drip.track(msg, done);
     });
