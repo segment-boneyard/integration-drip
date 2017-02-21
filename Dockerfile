@@ -1,8 +1,6 @@
-FROM segment/integration-worker:3.x
+FROM segment/integration-worker:4.0.0-alpha
 
 COPY . /integration
 WORKDIR /integration
 
-RUN apk add --update python make g++ \
-  && npm rebuild \
-  && apk del --purge python make g++
+RUN npm rebuild
