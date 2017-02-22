@@ -1,4 +1,9 @@
 
+1.1.1-alpha.1 / 2017-02-21
+==================
+
+  * Test out Ubuntu-based integration-worker image
+
 1.1.0 / 2017-01-31
 ==================
 
