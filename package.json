@@ -1,6 +1,6 @@
 {
   "name": "@segment/integration-drip",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Drip server-side integration",
   "author": "Segment <friends@segment.com>",
   "repository": {
