@@ -1,6 +1,5 @@
 
 var Test = require('segmentio-integration-tester');
-var helpers = require('./helpers');
 var facade = require('segmentio-facade');
 var mapper = require('../lib/mapper');
 var assert = require('assert');
@@ -22,7 +21,6 @@ describe('Drip', function(){
     drip = new Drip(settings);
     test = Test(drip, __dirname);
     test.mapper(mapper);
-    payload = {};
   });
 
   it('should have the correct settings', function(){
@@ -77,29 +75,19 @@ describe('Drip', function(){
 
   describe('.identify()', function(){
     it('should identify user successfully', function(done){
-      var msg = helpers.identify({ traits: { email: 'amir@segment.io' } });
-
-      payload.email = msg.email();
-      payload.user_id = msg.userId();
-      payload.custom_fields = drip.normalize(msg.traits());
-      delete payload.custom_fields["email"];
+      var msg = test.fixture('identify-basic');
 
       test
         .set(settings)
-        .identify(msg)
-        .sends({ subscribers: [payload] })
+        .identify(msg.input)
+        .sends({ subscribers: [msg.output] })
         .end(done);
-    });
-
-    it('should identify again', function(done){
-      var msg = helpers.identify({ traits: { email: 'amir@segment.io' } });
-      drip.identify(msg, done);
     });
 
     it('should error with BadRequest on wrong creds', function(done){
       test
         .set({ account: 1, token: 'x' })
-        .identify(helpers.identify())
+        .identify(test.fixture('identify-basic').input)
         .error('bad request status=401 msg=Authentication failed, check your credentials', done);
     });
   });
@@ -107,8 +95,33 @@ describe('Drip', function(){
 
   describe('.track()', function(){
     it('should track successfully', function(done){
-      var msg = helpers.track({ properties: { email: 'amir@segment.io' } });
-      drip.track(msg, done);
+      var msg = test.fixture('track-basic');
+
+      test
+        .set(settings)
+        .track(msg.input)
+        .sends({ events: [msg.output] })
+        .end(done);
+    });
+
+    it('should send revenue properly in cents', function(done){
+      var msg = test.fixture('track-revenue');
+
+      test
+        .set(settings)
+        .track(msg.input)
+        .sends({ events: [msg.output] })
+        .end(done);
+    });
+
+    it('should convert spaces to underscores for track properties', function(done) {
+      var msg = test.fixture('track-spaces');
+
+      test
+        .set(settings)
+        .track(msg.input)
+        .sends({ events: [msg.output] })
+        .end(done);
     });
   });
 });

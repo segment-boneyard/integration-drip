@@ -8,7 +8,8 @@
       "some trait": true
     }
   },
-  "output": {    "email": "jd@example.com",
+  "output": {
+    "email": "jd@example.com",
     "custom_fields": {
       "some_trait": true,
       "id": "user-id",
