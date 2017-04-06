@@ -1,3 +1,9 @@
+1.1.4 / 2017-04-05
+==================
+
+  * Replace spaces with underscores for track properties
+  * Re-write tests to make sense
+
 1.1.3 / 2017-03-10
 ==================
 

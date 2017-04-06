@@ -5,12 +5,14 @@
     "event": "my-event",
     "properties": {
       "prop": true,
+      "revenue": 19.99,
       "email": "jd@example.com"
     }
   },
   "output": {
     "properties": {
-      "prop": true
+      "prop": true,
+      "value" : 1999
     },
     "email": "jd@example.com",
     "action": "my-event"
