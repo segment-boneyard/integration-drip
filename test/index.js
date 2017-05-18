@@ -119,7 +119,7 @@ describe('Drip', function() {
 
         test.set(settings)
             .identify(msg.input)
-            .error('too many requests status=429 msg=Too Many Requests status', done)
+            .error('too many requests', done)
       });
     });
   });
