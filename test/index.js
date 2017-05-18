@@ -6,21 +6,38 @@ var assert = require('assert');
 var Identify = facade.Identify;
 var Track = facade.Track;
 var Drip = require('..');
+var redis = require('redis');
 
-describe('Drip', function(){
+describe('Drip', function() {
   var settings;
   var payload;
   var test;
   var drip;
+  var db;
 
-  beforeEach(function(){
+  before(function(done) {
+    db = redis.createClient();
+    db.on('ready', done);
+    db.on('error', done);
+  });
+
+  beforeEach(function() {
     settings = {
       account: 8838307,
       token: 'bmrdc6hczyn8yss8o8ta'
     };
+
     drip = new Drip(settings);
     test = Test(drip, __dirname);
     test.mapper(mapper);
+    drip.redis(db);
+
+    var headers = {
+        'x-ratelimit-limit': '5000',
+        'x-ratelimit-remaining': '5000'
+      };
+
+      drip.setLimit(headers, function(){});
   });
 
   it('should have the correct settings', function(){
@@ -89,6 +106,21 @@ describe('Drip', function(){
         .set({ account: 1, token: 'x' })
         .identify(test.fixture('identify-basic').input)
         .error('bad request status=401 msg=Authentication failed, check your credentials', done);
+    });
+
+    it('should retry - no remaining', function(done) {
+      var headers = {
+        'x-ratelimit-limit': '5000',
+        'x-ratelimit-remaining': '0'
+      };
+
+      drip.setLimit(headers, function(){
+        var msg = test.fixture('identify-basic');
+
+        test.set(settings)
+            .identify(msg.input)
+            .error('too many requests status=429 msg=Too Many Requests status', done)
+      });
     });
   });
 
