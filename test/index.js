@@ -101,11 +101,11 @@ describe('Drip', function() {
         .end(done);
     });
 
-    it('should error with BadRequest on wrong creds', function(done){
+    it('should error with Unauthorized on wrong creds', function(done){
       test
         .set({ account: 1, token: 'x' })
         .identify(test.fixture('identify-basic').input)
-        .error('bad request status=401 msg=Authentication failed, check your credentials', done);
+        .error('Unauthorized', done);
     });
 
     it('should retry - no remaining', function(done) {
