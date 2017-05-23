@@ -107,21 +107,6 @@ describe('Drip', function() {
         .identify(test.fixture('identify-basic').input)
         .error('Unauthorized', done);
     });
-
-    it('should retry - no remaining', function(done) {
-      var headers = {
-        'x-ratelimit-limit': '5000',
-        'x-ratelimit-remaining': '0'
-      };
-
-      drip.setLimit(headers, function(){
-        var msg = test.fixture('identify-basic');
-
-        test.set(settings)
-            .identify(msg.input)
-            .error('too many requests', done)
-      });
-    });
   });
 
 
@@ -155,5 +140,88 @@ describe('Drip', function() {
         .sends({ events: [msg.output] })
         .end(done);
     });
+  });
+
+  describe('.setLimit()', function() {
+    it('should set limit succefully', function(done) {
+      var appId = '140286';
+      var key = ['drip', appId].join(':');
+      drip.settings.account = appId;
+
+      var remaining = Math.floor((Math.random() * 1000) + 1);
+      var headers = {'x-ratelimit-remaining': remaining};
+
+      drip.setLimit(headers, function() {
+        db.get(key, function(err, res) {
+          assert.deepEqual(err, null);
+
+          limit = JSON.parse(res);
+          assert.deepEqual(limit.remaining, remaining);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('.limit()', function() {
+    it('req is called when there is no limit in redis', function(done) {
+      var appId = '300888';
+      drip.settings.account = appId;
+
+      req = function() {
+        done();
+      };
+
+      drip.limit(req, null);
+    });
+
+    it('req is called when there is remaining', function(done) {
+      var appId = '201187';
+      drip.settings.account = appId;
+
+      var remaining = 42;
+      var headers = {'x-ratelimit-remaining': remaining};
+
+      drip.setLimit(headers, function() {
+        req = function() {
+          done();
+        };
+        drip.limit(req, null);
+      });
+    });
+
+    it('req is called when reset is passed', function(done) {
+      var appId = '201187';
+      drip.settings.account = appId;
+
+      var remaining = 0;
+      var headers = {
+        'x-ratelimit-remaining': remaining,
+        'x-ratelimit-reset': Date.now()
+      };
+
+      drip.setLimit(headers, function() {
+        req = function() {
+          done();
+        };
+        drip.limit(req, null);
+      });
+    });
+
+    it('req is not called when remaining is 0 and reset is not passed',
+       function(done) {
+         var appId = '201187';
+         drip.settings.account = appId;
+
+         var remaining = 0;
+         var headers = {'x-ratelimit-remaining': remaining};
+
+         drip.setLimit(headers, function() {
+           fn = function() {
+             done();
+           };
+           drip.limit(null, fn);
+         });
+       });
   });
 });
