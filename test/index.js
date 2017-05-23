@@ -6,21 +6,33 @@ var assert = require('assert');
 var Identify = facade.Identify;
 var Track = facade.Track;
 var Drip = require('..');
+var redis = require('redis');
 
-describe('Drip', function(){
+describe('Drip', function() {
   var settings;
   var payload;
   var test;
   var drip;
+  var db;
 
-  beforeEach(function(){
+  before(function(done) {
+    db = redis.createClient();
+    db.on('ready', done);
+    db.on('error', done);
+  });
+
+  beforeEach(function() {
     settings = {
       account: 8838307,
       token: 'bmrdc6hczyn8yss8o8ta'
     };
+
     drip = new Drip(settings);
     test = Test(drip, __dirname);
     test.mapper(mapper);
+    drip.redis(db);
+
+    db.flushall();
   });
 
   it('should have the correct settings', function(){
@@ -84,11 +96,11 @@ describe('Drip', function(){
         .end(done);
     });
 
-    it('should error with BadRequest on wrong creds', function(done){
+    it('should error with Unauthorized on wrong creds', function(done){
       test
         .set({ account: 1, token: 'x' })
         .identify(test.fixture('identify-basic').input)
-        .error('bad request status=401 msg=Authentication failed, check your credentials', done);
+        .error('Unauthorized', done);
     });
   });
 
@@ -123,5 +135,83 @@ describe('Drip', function(){
         .sends({ events: [msg.output] })
         .end(done);
     });
+  });
+
+  describe('.setLimit()', function() {
+    it('should set limit succefully', function(done) {
+      var appId = '140286';
+      var key = ['drip', appId].join(':');
+      drip.settings.account = appId;
+
+      var remaining = Math.floor((Math.random() * 1000) + 1);
+      var headers = {'x-ratelimit-remaining': remaining};
+
+      drip.setLimit(headers, function() {
+        db.get(key, function(err, res) {
+          assert.deepEqual(err, null);
+
+          limit = JSON.parse(res);
+          assert.deepEqual(limit.remaining, remaining);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('.limit()', function() {
+    it('req is called when there is no limit in redis', function(done) {
+      var appId = '300888';
+      drip.settings.account = appId;
+      drip.limit(done, done);
+    });
+
+    it('req is called when there is remaining', function(done) {
+      var appId = '201187';
+      drip.settings.account = appId;
+
+      var remaining = 42;
+      var headers = {'x-ratelimit-remaining': remaining};
+
+      drip.setLimit(headers, function() {
+        drip.limit(done, done);
+      });
+    });
+
+    it('req is called when reset is passed', function(done) {
+      var appId = '201187';
+      drip.settings.account = appId;
+
+      var remaining = 0;
+      var headers = {
+        'x-ratelimit-remaining': remaining,
+        'x-ratelimit-reset': Date.now() - 1000
+      };
+
+      drip.setLimit(headers, function() {
+        drip.limit(done, done);
+      });
+    });
+
+    it('req is not called when remaining is 0 and reset is not passed',
+       function(done) {
+         var appId = '201187';
+         drip.settings.account = appId;
+
+         var remaining = 0;
+         var headers = {'x-ratelimit-remaining': remaining};
+
+         drip.setLimit(headers, function() {
+           var req = function() {
+             err = new Error('should not be called');
+             done(err);
+           };
+
+           var fn = function() {
+             done();
+           };
+
+           drip.limit(req, fn);
+         });
+       });
   });
 });
