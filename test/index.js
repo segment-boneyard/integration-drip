@@ -217,7 +217,7 @@ describe('Drip', function() {
          var headers = {'x-ratelimit-remaining': remaining};
 
          drip.setLimit(headers, function() {
-           fn = function() {
+           var fn = function() {
              done();
            };
            drip.limit(null, fn);
