@@ -32,12 +32,7 @@ describe('Drip', function() {
     test.mapper(mapper);
     drip.redis(db);
 
-    var headers = {
-        'x-ratelimit-limit': '5000',
-        'x-ratelimit-remaining': '5000'
-      };
-
-      drip.setLimit(headers, function(){});
+    db.flushall();
   });
 
   it('should have the correct settings', function(){
@@ -167,12 +162,7 @@ describe('Drip', function() {
     it('req is called when there is no limit in redis', function(done) {
       var appId = '300888';
       drip.settings.account = appId;
-
-      req = function() {
-        done();
-      };
-
-      drip.limit(req, null);
+      drip.limit(done, done);
     });
 
     it('req is called when there is remaining', function(done) {
@@ -183,10 +173,7 @@ describe('Drip', function() {
       var headers = {'x-ratelimit-remaining': remaining};
 
       drip.setLimit(headers, function() {
-        req = function() {
-          done();
-        };
-        drip.limit(req, null);
+        drip.limit(done, done);
       });
     });
 
@@ -197,14 +184,11 @@ describe('Drip', function() {
       var remaining = 0;
       var headers = {
         'x-ratelimit-remaining': remaining,
-        'x-ratelimit-reset': Date.now()
+        'x-ratelimit-reset': Date.now() - 1000
       };
 
       drip.setLimit(headers, function() {
-        req = function() {
-          done();
-        };
-        drip.limit(req, null);
+        drip.limit(done, done);
       });
     });
 
@@ -217,10 +201,16 @@ describe('Drip', function() {
          var headers = {'x-ratelimit-remaining': remaining};
 
          drip.setLimit(headers, function() {
+           var req = function() {
+             err = new Error('should not be called');
+             done(err);
+           };
+
            var fn = function() {
              done();
            };
-           drip.limit(null, fn);
+
+           drip.limit(req, fn);
          });
        });
   });
